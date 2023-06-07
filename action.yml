@@ -2,21 +2,60 @@ name: Bash Action
 description: A sample GitHub Action written in Bash
 
 inputs:
-  command:
-    description: The command to run. Either "greet" or "error"
+  image-name:
+    description: Container image name
+    required: true
+  is-release:
+    description: Is this a release or a pre-release version
     required: false
-    default: greet
-  who:
-    description: If the command is greet, the name to greet
+    default: "false"
+  generate-metadata-file:
+    description: Generate metadata.json file
     required: false
+    default: "true"
+  release-tag:
+    description: Container release tag for latest version
+    required: false
+    default: "latest"
+  pre-release-tag:
+    description: Container pre release tag for development builds
+    required: false
+    default: "develop"
+
+outputs:
+  docker-tags:
+    description: Container generated tags
+    value: ${{ steps.generate-tags.outputs.tags }}
+  git-tag:
+    description: Git tag for release
+    value: ${{ steps.next-version.outputs.result }}
 
 runs:
   using: composite
   steps:
     - run: echo "::add-matcher::${GITHUB_ACTION_PATH}/matcher.json"
       shell: bash
-    - name: Run Script
-      run: ${GITHUB_ACTION_PATH}/script.sh ${{ inputs.command }} ${{ inputs.who }}
+    - name: Fetch current tags
+      run: git fetch --tags
       shell: bash
+    - name: Calculate next version
+      id: next-version
+      shell: bash
+      run: echo "result=$(${GITHUB_ACTION_PATH}/get_next_version.sh ${{ inputs.is-release }})" >> $GITHUB_OUTPUT
+    - name: Generate tag
+      id: generate-tags
+      shell: bash
+      run: |
+        tags="['${{ inputs.image-name }}:${{ steps.next-version.outputs.result }}'"
+        if [[ "${{ inputs.is-release }}" == 'true' ]]; then
+          tags+=",'${{ inputs.image-name }}:${{ inputs.release-tag }}']"
+        else
+          tags+=",'${{ inputs.image-name }}:${{ inputs.pre-release-tag }}']"
+        fi
+        echo "tags=$tags" >> $GITHUB_OUTPUT
+    - name: Generate metadata file
+      if: ${{ inputs.generate-metadata-file == 'true' }}
+      shell: bash
+      run: ${GITHUB_ACTION_PATH}/generate_metadata_file.sh "${{ inputs.image-name }}:${{ steps.next-version.outputs.result }}"
     - run: echo "::remove-matcher owner=bash-action::"
       shell: bash
