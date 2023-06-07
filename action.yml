@@ -46,11 +46,11 @@ runs:
       id: generate-tags
       shell: bash
       run: |
-        tags="['${{ inputs.image-name }}:${{ steps.next-version.outputs.result }}'"
+        tags="${{ inputs.image-name }}:${{ steps.next-version.outputs.result }}"
         if [[ "${{ inputs.is-release }}" == 'true' ]]; then
-          tags+=",'${{ inputs.image-name }}:${{ inputs.release-tag }}']"
+          tags+=",${{ inputs.image-name }}:${{ inputs.release-tag }}"
         else
-          tags+=",'${{ inputs.image-name }}:${{ inputs.pre-release-tag }}']"
+          tags+=",${{ inputs.image-name }}:${{ inputs.pre-release-tag }}"
         fi
         echo "tags=$tags" >> $GITHUB_OUTPUT
     - name: Generate metadata file
