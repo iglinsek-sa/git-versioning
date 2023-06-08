@@ -25,3 +25,4 @@ Following outputs are available
 |---------------|---------|--------------------------------------------------------------------------------------------|
 |`docker-tags`|List|Container generated tags|
 |`git-tag`|String|Git tag for release|
+|`docker-version-tag`:String|Container specific version tags|

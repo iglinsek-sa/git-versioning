@@ -29,6 +29,9 @@ outputs:
   git-tag:
     description: Git tag for release
     value: ${{ steps.next-version.outputs.result }}
+  docker-version-tag:
+    description: Container specific version tags
+    value: ${{ inputs.image-name }}:${{ steps.next-version.outputs.result }}
 
 runs:
   using: composite
