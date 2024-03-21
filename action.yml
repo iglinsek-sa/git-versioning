@@ -63,6 +63,6 @@ runs:
     - name: Generate metadata file
       if: ${{ inputs.generate-metadata-file == 'true' }}
       shell: bash
-      run: ${GITHUB_ACTION_PATH}/generate_metadata_file.sh "${{ inputs.image-name }}:${{ steps.next-version.outputs.result }}"
+      run: ${GITHUB_ACTION_PATH}/generate_metadata_file.sh "${{ inputs.image-name }}:${{ steps.next-version.outputs.result }}" "${{ inputs.working-directory }}"
     - run: echo "::remove-matcher owner=bash-action::"
       shell: bash
