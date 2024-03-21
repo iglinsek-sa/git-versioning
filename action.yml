@@ -13,6 +13,10 @@ inputs:
     description: Generate metadata.json file
     required: false
     default: "true"
+  working-directory:
+    description: Where metadata.json will be stored
+    required: false
+    default: "."
   release-tag:
     description: Container release tag for latest version
     required: false

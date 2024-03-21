@@ -26,12 +26,14 @@ get_repo_remote_path() {
 #
 # Write the project metadata out to file to be included in the Docker image
 # $1 Required - The Docker tag to write out
+# $2 Optional - The metadata.json folder
 docker_tag=${1}
+working_dir=${2:-.}
 git_repo=$(get_repo_remote_path true | sed 's/^git@\(.*\):\(.*\)\(.git\)$/https:\/\/\1\/\2/g')
 
 pushd "${GITHUB_WORKSPACE}" >/dev/null
 echo "Writing metadata file to ${GITHUB_WORKSPACE}..."
-cat <<-EOF >metadata.json
+cat <<-EOF > "${working_dir}/metadata.json"
   {
     "version": "$(echo "${docker_tag##*:}" | cut -d'-' -f1,3)",
     "git_commit": "$(echo "${docker_tag##*:}" | cut -d'-' -f2)",
