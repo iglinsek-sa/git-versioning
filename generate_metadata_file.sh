@@ -33,7 +33,7 @@ git_repo=$(get_repo_remote_path true | sed 's/^git@\(.*\):\(.*\)\(.git\)$/https:
 
 pushd "${GITHUB_WORKSPACE}" >/dev/null
 echo "Writing metadata file to ${GITHUB_WORKSPACE}..."
-cat <<-EOF > "${working_dir}/metadata.json"
+cat <<-EOF >"${working_dir}/metadata.json"
   {
     "version": "$(echo "${docker_tag##*:}" | cut -d'-' -f1,3)",
     "git_commit": "$(echo "${docker_tag##*:}" | cut -d'-' -f2)",
